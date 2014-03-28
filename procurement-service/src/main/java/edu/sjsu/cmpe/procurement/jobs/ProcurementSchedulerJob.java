@@ -8,16 +8,18 @@ import de.spinscale.dropwizard.jobs.annotations.Every;
 import edu.sjsu.cmpe.procurement.ProcurementService;
 
 /**
- * This job will run at every 5 second.
+ * This job will run at every 5 minutes.
  */
-@Every("5s")
+@Every("5mn")
 public class ProcurementSchedulerJob extends Job {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Override
     public void doJob() {
 	String strResponse = ProcurementService.jerseyClient.resource(
-		"http://ip.jsontest.com/").get(String.class);
-	log.debug("Response from jsontest.com: {}", strResponse);
+//		"http://ip.jsontest.com/").get(String.class);
+//	log.debug("Response from jsontest.com: {}", strResponse);
+		"http://54.219.156.168").get(String.class);
+	log.debug("Response from Appolo Message Broker: {}", strResponse);
     }
 }
