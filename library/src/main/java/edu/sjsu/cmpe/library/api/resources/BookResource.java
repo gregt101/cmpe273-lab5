@@ -88,7 +88,9 @@ public class BookResource {
 	    @DefaultValue("available") @QueryParam("status") Status status) {
 	Book book = bookRepository.getBookByISBN(isbn.get());
 	book.setStatus(status);
-
+	if(status.equals("lost")) {
+		//lost boook precurement goes here
+	}
 	BookDto bookResponse = new BookDto(book);
 	String location = "/books/" + book.getIsbn();
 	bookResponse.addLink(new LinkDto("view-book", location, "GET"));
