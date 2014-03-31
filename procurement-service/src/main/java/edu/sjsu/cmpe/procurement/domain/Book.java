@@ -4,6 +4,16 @@ package edu.sjsu.cmpe.procurement.domain;
 public class Book {
     private long isbn;
     private String title;
+    private String category;
+    private String coverimage;
+
+    public String getCategory()  { return category; }
+
+    public void setCategory(String category) { this.category = category; }    
+    
+    public String getCoverImage() { return coverimage; }
+
+    public void setCoverImage(String coverimage)  { this.coverimage = coverimage; }   
 
     // add more fields here
 
