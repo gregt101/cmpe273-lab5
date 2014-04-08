@@ -1,19 +1,41 @@
 package edu.sjsu.cmpe.procurement.domain;
 
+import java.net.URL;
+
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class Book {
     private long isbn;
     private String title;
+
+    @NotEmpty
     private String category;
-    private String coverimage;
 
-    public String getCategory()  { return category; }
+    private URL coverimage;
 
-    public void setCategory(String category) { this.category = category; }    
-    
-    public String getCoverImage() { return coverimage; }
+    /**
+     * @return the category
+     */
+    public String getCategory() { return category;  }
 
-    public void setCoverImage(String coverimage)  { this.coverimage = coverimage; }   
+    /**
+     * @param category
+     *            the category to set
+     */
+    public void setCategory(String category) { this.category = category;  }
+
+    /**
+     * @return the coverimage
+     */
+    public URL getCoverimage() { return coverimage;  }
+
+    /**
+     * @param coverimage
+     *            the coverimage to set
+     */
+    public void setCoverimage(URL coverImage) { this.coverimage = coverImage;  }
 
     // add more fields here
 

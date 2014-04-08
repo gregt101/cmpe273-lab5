@@ -52,7 +52,7 @@ public class ProcurementService extends Service<ProcurementServiceConfiguration>
 	 * ResourceConfig instance does not contain any root resource classes.
 	 */
 	environment.addResource(RootResource.class);
-
+//String hold = configuration.getApolloHost();
 	String queueName = configuration.getStompQueueName();
 	String topicName = configuration.getStompTopicPrefix();
 	log.debug("Queue name is {}. Topic is {}", queueName, topicName);

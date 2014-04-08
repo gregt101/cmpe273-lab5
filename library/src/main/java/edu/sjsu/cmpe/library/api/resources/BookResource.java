@@ -13,6 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.jms.JMSException;
 
 import com.yammer.dropwizard.jersey.params.LongParam;
 import com.yammer.metrics.annotation.Timed;
@@ -85,11 +86,12 @@ public class BookResource {
     @Path("/{isbn}")
     @Timed(name = "update-book-status")
     public Response updateBookStatus(@PathParam("isbn") LongParam isbn,
-	    @DefaultValue("available") @QueryParam("status") Status status) {
+	    @DefaultValue("available") @QueryParam("status") Status status)throws JMSException {
 	Book book = bookRepository.getBookByISBN(isbn.get());
 	book.setStatus(status);
 	if(status.equals("lost")) {
 		//lost boook precurement goes here
+		bookRepository.producer(isbn.get());
 	}
 	BookDto bookResponse = new BookDto(book);
 	String location = "/books/" + book.getIsbn();

@@ -1,14 +1,16 @@
 package edu.sjsu.cmpe.library;
 
+import javax.jms.Connection;
+import org.fusesource.stomp.jms.StompJmsConnectionFactory;
+import java.util.concurrent.*;
+//import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.views.ViewBundle;
-
 import edu.sjsu.cmpe.library.api.resources.BookResource;
 import edu.sjsu.cmpe.library.api.resources.RootResource;
 import edu.sjsu.cmpe.library.config.LibraryServiceConfiguration;
@@ -20,35 +22,43 @@ public class LibraryService extends Service<LibraryServiceConfiguration> {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception
+    {
 	new LibraryService().run(args);
     }
 
     @Override
-    public void initialize(Bootstrap<LibraryServiceConfiguration> bootstrap) {
+    public void initialize(Bootstrap<LibraryServiceConfiguration> bootstrap)
+    {
 	bootstrap.setName("library-service");
 	bootstrap.addBundle(new ViewBundle());
 	bootstrap.addBundle(new AssetsBundle());
     }
 
     @Override
-    public void run(LibraryServiceConfiguration configuration,
-	    Environment environment) throws Exception {
-	// This is how you pull the configurations from library_x_config.yml
+    public void run(final LibraryServiceConfiguration configuration,Environment environment) throws Exception
+    {
 	String queueName = configuration.getStompQueueName();
 	String topicName = configuration.getStompTopicName();
-	log.debug("{} - Queue name is {}. Topic name is {}",
-		configuration.getLibraryName(), queueName,
-		topicName);
-	// TODO: Apollo STOMP Broker URL and login
-
-	/** Root API */
+	log.debug("Topic name is {} - Queue name is {}",configuration.getLibraryName(),topicName,queueName);
 	environment.addResource(RootResource.class);
-	/** Books APIs */
-	BookRepositoryInterface bookRepository = new BookRepository();
+	final BookRepositoryInterface bookRepository = new BookRepository();
+	bookRepository.getConfiguration(configuration);
+	int cntThread = 1;
+	ExecutorService executor = Executors.newFixedThreadPool(cntThread);
+	Runnable backgroundTask = new Runnable() {
+	    @Override
+	    public void run() {
+	    	while(true){
+	    	Listener listener = new Listener(configuration);
+	    	listener.listenService(bookRepository);
+	    	}
+	    }
+	};
+	executor.execute(backgroundTask);
+	System.out.println("Background task running...");
 	environment.addResource(new BookResource(bookRepository));
-
-	/** UI Resources */
 	environment.addResource(new HomeResource(bookRepository));
     }
 }
+
