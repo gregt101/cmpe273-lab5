@@ -20,11 +20,12 @@ public class HomeResource {
     @GET
     public HomeView getHome() {
 	return new HomeView(bookRepository.getBookByISBN(1L));
+}
 */	
-    }@GET
+    @GET
     public HomeView getHome() {
     return new HomeView(bookRepository.getAllBooks());
-}
+    }
     
     
 }
